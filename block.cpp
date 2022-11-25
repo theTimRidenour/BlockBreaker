@@ -19,11 +19,6 @@ struct brick
 struct level
 {
     int row[15][10];
-//    int rowOne[10];
-//    int rowTwo[10];
-//    int rowThree[10];
-//    int rowFour[10];
-//    int rowFive[10];
 };
 
 int main(int argc, char const *argv[])
@@ -114,6 +109,10 @@ int main(int argc, char const *argv[])
                 DrawRectangle(bricks[i].x, bricks[i].y, bricks[i].width, bricks[i].height, RED);
             }
         }
+
+        // draw player and ball
+        DrawRectangle(playerX, playerY, playerWidth, playerHeight, BLUE);
+        DrawCircle(ballX, ballY, ballRadius, BLACK);
 
         if (runningTime >= updateTime)
         {
