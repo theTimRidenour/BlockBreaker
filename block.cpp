@@ -18,7 +18,7 @@ struct brick
 
 struct level
 {
-    int row[15][10];
+    int row[15][14];
 };
 
 int main(int argc, char const *argv[])
@@ -63,36 +63,36 @@ int main(int argc, char const *argv[])
     // levels
     int currentLevel = 1;
     level levels[1];
-        levels[0] = level{{{},
-                           {1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-                           {1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-                           {1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-                           {0, 1, 1, 1, 1, 1, 1, 1, 1, 0},
-                           {0, 0, 1, 1, 1, 1, 1, 1, 0, 0},
-                           {0, 0, 0, 1, 1, 1, 1, 0, 0, 0},
-                           {0, 0, 0, 0, 1, 1, 0, 0, 0, 0},
+        levels[0] = level{{{5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5},
+                           {1, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 1},
+                           {1, 1, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 1, 1},
+                           {1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1},
+                           {0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0},
+                           {0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0},
+                           {0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0},
+                           {0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0},
                            {},
-                           {1, 0, 1, 0, 1, 0, 1, 0, 1, 0},
+                           {1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0},
                            {},
-                           {1, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-                           {1, 1, 0, 0, 0, 0, 0, 0, 1, 1},
-                           {1, 1, 1, 0, 0, 0, 0, 1, 1, 1},
-                           {1, 1, 1, 1, 0, 0, 1, 1, 1, 1}}};
+                           {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+                           {1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1},
+                           {1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1},
+                           {1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1}}};
 
     // build bricks
-    int brickWidth = 117;
+    int brickWidth = 90;
     int brickHeight = 20;
     int brickCnt = 0;
-    brick bricks[150];
+    brick bricks[210];
     for (int j = 0; j < 15; j++)
     {
-        for (int k = 0; k < 10; k++)
+        for (int k = 0; k < 14; k++)
         {
             bricks[brickCnt].power = levels[currentLevel - 1].row[j][k];
             bricks[brickCnt].width = brickWidth;
             bricks[brickCnt].height = brickHeight;
-            bricks[brickCnt].x = 10 + (10 * k) + (bricks[brickCnt].width * k);
-            bricks[brickCnt].y = 30 + (10 * j) + (bricks[brickCnt].height * j);
+            bricks[brickCnt].x = 3 + k + (bricks[brickCnt].width * k);
+            bricks[brickCnt].y = 50 + j + (bricks[brickCnt].height * j);
             bricks[brickCnt].l_x = bricks[brickCnt].x;
             bricks[brickCnt].r_x = bricks[brickCnt].x + bricks[brickCnt].width;
             bricks[brickCnt].u_y = bricks[brickCnt].y;
@@ -100,6 +100,18 @@ int main(int argc, char const *argv[])
             brickCnt++;
         }
     }
+
+    /******************************
+     *        Power  Chart        *
+     * ---------------------------*
+     * 0 = No Brick               *
+     * 1 = RED      - 1 hit       *
+     * 2 = DARKBLUE - 2 hits      *
+     * 3 = GREEN    - 3 hits      *
+     * 4 = PURPLE   - 4 hits      *
+     * 5 = GRAY     - unbreakable *
+     ******************************/
+    Color brickColors[5]{RED, DARKBLUE, GREEN, PURPLE, GRAY};
     
     SetTargetFPS(60);
     while(!WindowShouldClose())
@@ -112,11 +124,11 @@ int main(int argc, char const *argv[])
         ClearBackground(WHITE);
 
         // draw bricks
-        for (int i = 0; i < 150; i++)
+        for (int i = 0; i < 210; i++)
         {
             if (bricks[i].power > 0)
             {
-                DrawRectangle(bricks[i].x, bricks[i].y, bricks[i].width, bricks[i].height, RED);
+                DrawRectangle(bricks[i].x, bricks[i].y, bricks[i].width, bricks[i].height, brickColors[bricks[i].power - 1]);
             }
         }
 
