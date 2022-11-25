@@ -157,8 +157,10 @@ int main(int argc, char const *argv[])
             // player moves left or right
             if (IsKeyDown(KEY_LEFT)) {
                 playerX -= playerVel;
+                if (playerX < 0) { playerX = 0; }
             } else if (IsKeyDown(KEY_RIGHT)) {
                 playerX += playerVel;
+                if (playerX > WIN_WIDTH - playerWidth) { playerX = WIN_WIDTH - playerWidth; }
             }
 
             // ball movement
@@ -167,8 +169,8 @@ int main(int argc, char const *argv[])
             if (ballInPlay) {
                 ballX += ballVel * ballXDir;
                 ballY += ballVel * ballYDir;
-                if (ballX < 0 + ballRadius) { // bounce off left wall
-                    ballX = 0 + ballRadius;
+                if (ballX < ballRadius) { // bounce off left wall
+                    ballX = ballRadius;
                     ballXDir = -ballXDir;
                 } else if (ballX > WIN_WIDTH - ballRadius) { // bounce off right wall
                     ballX = WIN_WIDTH - ballRadius;
@@ -176,7 +178,7 @@ int main(int argc, char const *argv[])
                 } else if (ballY < 50 + ballRadius) { // bounce off ceilling
                     ballY = 50 + ballRadius;
                     ballYDir = -ballYDir;
-                } else if (ballY > WIN_HEIGHT + ballRadius) { // reset ball if it goes out of play
+                } else if (ballY > WIN_HEIGHT + ballRadius*2) { // reset ball if it goes out of play
                     ballX = playerCenter;
                     ballY = playerY - ballRadius - 3;
                     ballInPlay = false;
