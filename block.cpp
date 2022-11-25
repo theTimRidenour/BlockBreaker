@@ -162,20 +162,26 @@ int main(int argc, char const *argv[])
             }
 
             // ball movement
-            if (!ballInPlay) { ballX = playerCenter; }
-            if (!ballInPlay && (IsKeyPressed(KEY_UP) || IsKeyPressed(KEY_SPACE))) { ballInPlay = true; }
+            if (!ballInPlay) { ballX = playerCenter; } // ball stays with paddle when not in play
+            if (!ballInPlay && (IsKeyPressed(KEY_UP) || IsKeyPressed(KEY_SPACE))) { ballInPlay = true; } // ball in play
             if (ballInPlay) {
                 ballX += ballVel * ballXDir;
                 ballY += ballVel * ballYDir;
-                if (ballX < 0 + ballRadius) {
+                if (ballX < 0 + ballRadius) { // bounce off left wall
                     ballX = 0 + ballRadius;
                     ballXDir = -ballXDir;
-                } else if (ballX > WIN_WIDTH - ballRadius) {
+                } else if (ballX > WIN_WIDTH - ballRadius) { // bounce off right wall
                     ballX = WIN_WIDTH - ballRadius;
                     ballXDir = -ballXDir;
-                } else if (ballY < 50 + ballRadius) {
+                } else if (ballY < 50 + ballRadius) { // bounce off ceilling
                     ballY = 50 + ballRadius;
                     ballYDir = -ballYDir;
+                } else if (ballY > WIN_HEIGHT + ballRadius) { // reset ball if it goes out of play
+                    ballX = playerCenter;
+                    ballY = playerY - ballRadius - 3;
+                    ballInPlay = false;
+                    ballXDir = 1;
+                    ballYDir = -1;
                 }
             }
 
