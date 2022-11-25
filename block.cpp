@@ -122,6 +122,12 @@ int main(int argc, char const *argv[])
      * 5 = GRAY     - unbreakable *
      ******************************/
     Color brickColors[5]{RED, DARKBLUE, GREEN, PURPLE, GRAY};
+
+    // brick collision information
+    int tempBrickSide = 0; // 0 = left, 1 = top, 2 = right, 3 = bottom
+    int tempX = 0;
+    int tempY = 0;
+    bool collision_with_brick{false};
     
     SetTargetFPS(60);
     while(!WindowShouldClose())
@@ -144,6 +150,37 @@ int main(int argc, char const *argv[])
                 (player_u_y <= ball_b_y) &&
                 (player_r_x >= ball_l_x) &&
                 (player_l_x <= ball_r_x);
+            // bricks
+            for (int i = 0; i < 210; i++) {
+                if (!collision_with_brick && bricks[i].power != 0 && bricks[i].power != 5) {
+                    collision_with_brick =
+                        (bricks[i].b_y >= ball_u_y) &&
+                        (bricks[i].u_y <= ball_b_y) &&
+                        (bricks[i].r_x >= ball_l_x) &&
+                        (bricks[i].l_x <= ball_r_x);
+                    
+                    if (collision_with_brick) {
+                        bricks[i].power--;
+                        if (ballY >= bricks[i].u_y && ballY <= bricks[i].b_y) {
+                            if (ballX < bricks[i].l_x + bricks[i].width/2) {
+                                tempBrickSide = 0;
+                                tempX = bricks[i].l_x;
+                            } else {
+                                tempBrickSide = 2;
+                                tempX = bricks[i].r_x;
+                            }
+                        } else {
+                            if (ballY < bricks[i].u_y + bricks[i].height/2) {
+                                tempBrickSide = 1;
+                                tempY = bricks[i].u_y;
+                            } else {
+                                tempBrickSide = 3;
+                                tempY = bricks[i].b_y;
+                            }
+                        }
+                    }
+                }
+            }
 
         BeginDrawing();
 
@@ -180,16 +217,28 @@ int main(int argc, char const *argv[])
             if (!ballInPlay) { ballX = playerCenter; } // ball stays with paddle when not in play
             if (!ballInPlay && (IsKeyPressed(KEY_UP) || IsKeyPressed(KEY_SPACE))) { ballInPlay = true; } // ball in play
 
-            if (collision_with_player) {
-                collision_with_player = false;
-                ballY = playerY - ballRadius;
-                if (ball_l_x > playerCenter) {
-                    ballXDir = 1;
-                } else {
-                    ballXDir = -1;
+                // ball collision
+                if (collision_with_player) { // with player
+                    collision_with_player = false;
+                    ballY = playerY - ballRadius;
+                    if (ball_l_x > playerCenter) {
+                        ballXDir = 1;
+                    } else {
+                        ballXDir = -1;
+                    }
+                    ballYDir = -ballYDir;
+                } else if (collision_with_brick) { // with brick
+                    if (tempBrickSide == 0 || tempBrickSide == 2) {
+                        ballXDir = -ballXDir;
+                        if (tempBrickSide == 0) { ballX = tempX - ballRadius; 
+                        } else { ballX = tempX + ballRadius; }
+                    } else {
+                        ballYDir = -ballYDir;
+                        if (tempBrickSide == 1) { ballY = tempY - ballRadius;
+                        } else { ballY = tempY + ballRadius; }
+                    }
+                    collision_with_brick = false;
                 }
-                ballYDir = -ballYDir;
-            }
 
             if (ballInPlay) {
                 ballX += ballVel * ballXDir;
