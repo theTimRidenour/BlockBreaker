@@ -116,6 +116,17 @@ int main(int argc, char const *argv[])
     SetTargetFPS(60);
     while(!WindowShouldClose())
     {
+        // update edges
+            // player
+            player_l_x = playerX;
+            player_r_x = playerX + playerWidth;
+            playerCenter = playerX + playerWidth/2;
+            // ball
+            ball_l_x = ballX - ballRadius;
+            ball_r_x = ballX + ballRadius;
+            ball_u_y = ballY - ballRadius;
+            ball_b_y = ballY + ballRadius;
+
         BeginDrawing();
 
         const float dT{ GetFrameTime() };
