@@ -138,7 +138,11 @@ int main(int argc, char const *argv[])
 
         if (runningTime >= updateTime)
         {
-            // TODO: Game Code
+            if (IsKeyDown(KEY_LEFT)) {
+                playerX -= 10;
+            } else if (IsKeyDown(KEY_RIGHT)) {
+                playerX += 10;
+            }
 
             runningTime = 0.0;
         }
