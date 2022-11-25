@@ -33,11 +33,12 @@ int main(int argc, char const *argv[])
     float runningTime = 0.0;
 
     // player
-        // position & size
+        // position, size & movement
         int playerWidth = 75;
         int playerHeight = 6;
         int playerX = WIN_WIDTH/2 - playerWidth;
         int playerY = WIN_HEIGHT - playerHeight - 10;
+        int playerVel = 10;
         // collision
         int playerCenter = playerX + playerWidth/2;
         int player_l_x = playerX;
@@ -50,17 +51,19 @@ int main(int argc, char const *argv[])
         std::sprintf(playerScoreText, "%d", playerScore);
 
     // ball
-        // position & size
+        // position, size & movement
         int ballRadius = 5;
         int ballX = playerCenter;
         int ballY = playerY - ballRadius - 3;
+        bool ballInPlay{false};
+        int ballVel = 7;
+        int ballXDir = 1;
+        int ballYDir = -1;
         // collision
         int ball_l_x = ballX - ballRadius;
         int ball_r_x = ballX + ballRadius;
         int ball_u_y = ballY - ballRadius;
         int ball_b_y = ballY + ballRadius;
-        // check if moving
-        bool ballInPlay{false};
 
     // levels
     int currentLevel = 1;
@@ -153,14 +156,18 @@ int main(int argc, char const *argv[])
         {
             // player moves left or right
             if (IsKeyDown(KEY_LEFT)) {
-                playerX -= 10;
+                playerX -= playerVel;
             } else if (IsKeyDown(KEY_RIGHT)) {
-                playerX += 10;
+                playerX += playerVel;
             }
 
             // ball movement
             if (!ballInPlay) { ballX = playerCenter; }
             if (!ballInPlay && (IsKeyPressed(KEY_UP) || IsKeyPressed(KEY_SPACE))) { ballInPlay = true; }
+            if (ballInPlay) {
+                ballX += ballVel * ballXDir;
+                ballY += ballVel * ballYDir;
+            }
 
             runningTime = 0.0;
         }
