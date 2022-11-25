@@ -64,6 +64,11 @@ int main(int argc, char const *argv[])
         int ball_r_x = ballX + ballRadius;
         int ball_u_y = ballY - ballRadius;
         int ball_b_y = ballY + ballRadius;
+        bool collision_with_player =
+            (player_b_y >= ball_u_y) &&
+            (player_u_y <= ball_b_y) &&
+            (player_r_x >= ball_l_x) &&
+            (player_l_x <= ball_r_x);
 
     // levels
     int currentLevel = 1;
@@ -132,6 +137,14 @@ int main(int argc, char const *argv[])
             ball_u_y = ballY - ballRadius;
             ball_b_y = ballY + ballRadius;
 
+        // update collisions
+            // player
+            collision_with_player =
+                (player_b_y >= ball_u_y) &&
+                (player_u_y <= ball_b_y) &&
+                (player_r_x >= ball_l_x) &&
+                (player_l_x <= ball_r_x);
+
         BeginDrawing();
 
         const float dT{ GetFrameTime() };
@@ -166,6 +179,18 @@ int main(int argc, char const *argv[])
             // ball movement
             if (!ballInPlay) { ballX = playerCenter; } // ball stays with paddle when not in play
             if (!ballInPlay && (IsKeyPressed(KEY_UP) || IsKeyPressed(KEY_SPACE))) { ballInPlay = true; } // ball in play
+
+            if (collision_with_player) {
+                collision_with_player = false;
+                ballY = playerY - ballRadius;
+                if (ball_l_x > playerCenter) {
+                    ballXDir = 1;
+                } else {
+                    ballXDir = -1;
+                }
+                ballYDir = -ballYDir;
+            }
+
             if (ballInPlay) {
                 ballX += ballVel * ballXDir;
                 ballY += ballVel * ballYDir;
