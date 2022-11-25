@@ -59,6 +59,8 @@ int main(int argc, char const *argv[])
         int ball_r_x = ballX + ballRadius;
         int ball_u_y = ballY - ballRadius;
         int ball_b_y = ballY + ballRadius;
+        // check if moving
+        bool ballInPlay{false};
 
     // levels
     int currentLevel = 1;
@@ -149,11 +151,15 @@ int main(int argc, char const *argv[])
 
         if (runningTime >= updateTime)
         {
+            // player moves left or right
             if (IsKeyDown(KEY_LEFT)) {
                 playerX -= 10;
             } else if (IsKeyDown(KEY_RIGHT)) {
                 playerX += 10;
             }
+
+            // ball movement
+            if (!ballInPlay) { ballX = playerCenter; }
 
             runningTime = 0.0;
         }
