@@ -167,6 +167,16 @@ int main(int argc, char const *argv[])
             if (ballInPlay) {
                 ballX += ballVel * ballXDir;
                 ballY += ballVel * ballYDir;
+                if (ballX < 0 + ballRadius) {
+                    ballX = 0 + ballRadius;
+                    ballXDir = -ballXDir;
+                } else if (ballX > WIN_WIDTH - ballRadius) {
+                    ballX = WIN_WIDTH - ballRadius;
+                    ballXDir = -ballXDir;
+                } else if (ballY < 50 + ballRadius) {
+                    ballY = 50 + ballRadius;
+                    ballYDir = -ballYDir;
+                }
             }
 
             runningTime = 0.0;
