@@ -18,11 +18,12 @@ struct brick
 
 struct level
 {
-    int rowOne[10];
-    int rowTwo[10];
-    int rowThree[10];
-    int rowFour[10];
-    int rowFive[10];
+    int row[15][10];
+//    int rowOne[10];
+//    int rowTwo[10];
+//    int rowThree[10];
+//    int rowFour[10];
+//    int rowFive[10];
 };
 
 int main(int argc, char const *argv[])
@@ -65,12 +66,35 @@ int main(int argc, char const *argv[])
         int ball_b_y = ballY + ballRadius;
 
     // levels
+    int currentLevel = 1;
     level levels[1];
-        levels[0] = level{{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                          {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                          {1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-                          {1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-                          {1, 1, 1, 1, 1, 1, 1, 1, 1, 1}};
+        levels[0] = level{{{},
+                           {},
+                           {1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
+                           {1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
+                           {1, 1, 1, 1, 1, 1, 1, 1, 1, 1}}};
+
+    // build bricks
+    int brickWidth = 117;
+    int brickHeight = 20;
+    int brickCnt = 0;
+    brick bricks[150];
+    for (int j = 0; j < 15; j++)
+    {
+        for (int k = 0; k < 10; k++)
+        {
+            bricks[brickCnt].power = levels[currentLevel - 1].row[j][k];
+            bricks[brickCnt].width = brickWidth;
+            bricks[brickCnt].height = brickHeight;
+            bricks[brickCnt].x = 10 + (10 * k) + (bricks[brickCnt].width * k);
+            bricks[brickCnt].y = 30 + (10 * j) + (bricks[brickCnt].height * j);
+            bricks[brickCnt].l_x = bricks[brickCnt].x;
+            bricks[brickCnt].r_x = bricks[brickCnt].x + bricks[brickCnt].width;
+            bricks[brickCnt].u_y = bricks[brickCnt].y;
+            bricks[brickCnt].b_y = bricks[brickCnt].y + bricks[brickCnt].height;
+            brickCnt++;
+        }
+    }
     
     SetTargetFPS(60);
     while(!WindowShouldClose())
@@ -81,6 +105,15 @@ int main(int argc, char const *argv[])
         runningTime += dT;
 
         ClearBackground(WHITE);
+
+        // draw bricks
+        for (int i = 0; i < 150; i++)
+        {
+            if (bricks[i].power > 0)
+            {
+                DrawRectangle(bricks[i].x, bricks[i].y, bricks[i].width, bricks[i].height, RED);
+            }
+        }
 
         if (runningTime >= updateTime)
         {
