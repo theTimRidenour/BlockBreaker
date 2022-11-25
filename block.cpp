@@ -52,7 +52,7 @@ int main(int argc, char const *argv[])
     // ball
         // position & size
         int ballRadius = 5;
-        int ballX = playerCenter - ballRadius;
+        int ballX = playerCenter;
         int ballY = playerY - ballRadius - 3;
         // collision
         int ball_l_x = ballX - ballRadius;
@@ -64,10 +64,20 @@ int main(int argc, char const *argv[])
     int currentLevel = 1;
     level levels[1];
         levels[0] = level{{{},
+                           {1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
+                           {1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
+                           {1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
+                           {0, 1, 1, 1, 1, 1, 1, 1, 1, 0},
+                           {0, 0, 1, 1, 1, 1, 1, 1, 0, 0},
+                           {0, 0, 0, 1, 1, 1, 1, 0, 0, 0},
+                           {0, 0, 0, 0, 1, 1, 0, 0, 0, 0},
                            {},
-                           {1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-                           {1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-                           {1, 1, 1, 1, 1, 1, 1, 1, 1, 1}}};
+                           {1, 0, 1, 0, 1, 0, 1, 0, 1, 0},
+                           {},
+                           {1, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+                           {1, 1, 0, 0, 0, 0, 0, 0, 1, 1},
+                           {1, 1, 1, 0, 0, 0, 0, 1, 1, 1},
+                           {1, 1, 1, 1, 0, 0, 1, 1, 1, 1}}};
 
     // build bricks
     int brickWidth = 117;
