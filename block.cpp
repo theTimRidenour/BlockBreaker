@@ -160,6 +160,7 @@ int main(int argc, char const *argv[])
 
             // ball movement
             if (!ballInPlay) { ballX = playerCenter; }
+            if (!ballInPlay && (IsKeyPressed(KEY_UP) || IsKeyPressed(KEY_SPACE))) { ballInPlay = true; }
 
             runningTime = 0.0;
         }
