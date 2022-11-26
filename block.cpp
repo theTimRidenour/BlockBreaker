@@ -111,17 +111,17 @@ int main(int argc, char const *argv[])
         }
     }
 
-    /******************************
-     *        Power  Chart        *
-     * ---------------------------*
-     * 0 = No Brick               *
-     * 1 = RED      - 1 hit       *
-     * 2 = DARKBLUE - 2 hits      *
-     * 3 = GREEN    - 3 hits      *
-     * 4 = PURPLE   - 4 hits      *
-     * 5 = GRAY     - unbreakable *
-     ******************************/
-    Color brickColors[5]{RED, DARKBLUE, GREEN, PURPLE, GRAY};
+    /****************************
+     *       Power  Chart       *
+     * -------------------------*
+     * 0 = No Brick             *
+     * 1 = YELLOW - 1 hit       *
+     * 2 = GREEN  - 2 hits      *
+     * 3 = ORANGE - 3 hits      *
+     * 4 = RED    - 4 hits      *
+     * 5 = GRAY   - unbreakable *
+     ****************************/
+    Color brickColors[5]{YELLOW, GREEN, ORANGE, RED, GRAY};
 
     // brick collision information
     int tempBrickSide = 0; // 0 = left, 1 = top, 2 = right, 3 = bottom
@@ -190,7 +190,7 @@ int main(int argc, char const *argv[])
         const float dT{ GetFrameTime() };
         runningTime += dT;
 
-        ClearBackground(WHITE);
+        ClearBackground(BLACK);
 
         // draw bricks
         for (int i = 0; i < 210; i++)
@@ -203,7 +203,7 @@ int main(int argc, char const *argv[])
 
         // draw player and ball
         DrawRectangle(playerX, playerY, playerWidth, playerHeight, BLUE);
-        DrawCircle(ballX, ballY, ballRadius, BLACK);
+        DrawCircle(ballX, ballY, ballRadius, LIGHTGRAY);
 
         if (runningTime >= updateTime)
         {
