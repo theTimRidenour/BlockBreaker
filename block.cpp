@@ -182,6 +182,9 @@ int main(int argc, char const *argv[])
                 }
             }
 
+        // Toggle full screen
+        if (IsKeyDown(KEY_LEFT_CONTROL) && IsKeyPressed(KEY_F)) { ToggleFullscreen(); }
+
         BeginDrawing();
 
         const float dT{ GetFrameTime() };
