@@ -92,7 +92,7 @@ int main(int argc, char const *argv[])
                            {0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0},
                            {0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0},
                            {},
-                           {1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0},
+                           {1, 0, 1, 5, 1, 0, 1, 0, 1, 5, 1, 0, 1, 0},
                            {},
                            {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
                            {1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1},
@@ -120,7 +120,14 @@ int main(int argc, char const *argv[])
     Color brickColors[5]{YELLOW, GREEN, ORANGE, RED, GRAY};
 
     // brick collision information
-    int tempBrickSide = 0; // 0 = left, 1 = top, 2 = right, 3 = bottom
+    /***************************************************
+     *                   Brick Sides                   *
+     * ------------------------------------------------*
+     * 1 = top-left      2 = top      3 = top-right    *
+     * 0 = left                       4 = right        *
+     * 7 = bottom-left   6 = bottom   5 = bottom-right *
+     ***************************************************/
+    int tempBrickSide = 0;
     int tempX = 0;
     int tempY = 0;
     bool collision_with_brick{false};
@@ -174,7 +181,7 @@ int main(int argc, char const *argv[])
                 (player_l_x <= ball_r_x);
             // bricks
             for (int i = 0; i < 210; i++) {
-                if (!collision_with_brick && bricks[i].power != 0 && bricks[i].power != 5) {
+                if (!collision_with_brick && bricks[i].power != 0) {
                     collision_with_brick =
                         (bricks[i].b_y >= ball_u_y) &&
                         (bricks[i].u_y <= ball_b_y) &&
@@ -182,8 +189,75 @@ int main(int argc, char const *argv[])
                         (bricks[i].l_x <= ball_r_x);
                     
                     if (collision_with_brick) {
-                        bricks[i].power--;
-                        if (ballY >= bricks[i].u_y && ballY <= bricks[i].b_y) {
+                        if (bricks[i].power != 5) { bricks[i].power--; }
+                        tempX = ballX + ballVel * -ballXDir;
+                        tempY = ballY + ballVel * -ballYDir;
+                        if (abs(tempX - bricks[i].l_x) < abs(tempX - bricks[i].r_x)) {
+                            if (abs(tempY - bricks[i].u_y) < abs(tempY - bricks[i].b_y)) {
+                                if (abs(tempX - bricks[i].l_x) == abs(tempY - bricks[i].u_y)) {
+                                    // hit top left corner
+                                    tempBrickSide = 1;
+                                    ballX = bricks[i].l_x - ballRadius;
+                                    ballY = bricks[i].u_y - ballRadius;
+                                } else if (abs(tempX - bricks[i].l_x) < abs(tempY - bricks[i].u_y)) {
+                                    // hit left side
+                                    tempBrickSide = 0;
+                                    ballX = bricks[i].l_x - ballRadius;
+                                } else {
+                                    // hit top
+                                    tempBrickSide = 2;
+                                    ballY = bricks[i].u_y - ballRadius;
+                                }
+                            } else {
+                                if (abs(tempX - bricks[i].l_x) == abs(tempY - bricks[i].b_y)) {
+                                    // hit bottom left corner
+                                    tempBrickSide = 7;
+                                    ballX = bricks[i].l_x - ballRadius;
+                                    ballY = bricks[i].b_y + ballRadius;
+                                } else if (abs(tempX - bricks[i].l_x) < abs(tempY - bricks[i].b_y)) {
+                                    // hit left side
+                                    tempBrickSide = 0;
+                                    ballX = bricks[i].l_x - ballRadius;
+                                } else {
+                                    // hit bottom
+                                    tempBrickSide = 6;
+                                    ballY = bricks[i].b_y + ballRadius;
+                                }
+                            }
+                        } else {
+                            if (abs(tempY - bricks[i].u_y) < abs(tempY - bricks[i].b_y)) {
+                                if (abs(tempX - bricks[i].r_x) == abs(tempY - bricks[i].u_y)) {
+                                    // hit top right corner
+                                    tempBrickSide = 3;
+                                    ballX = bricks[i].r_x + ballRadius;
+                                    ballY = bricks[i].u_y - ballRadius;
+                                } else if (abs(tempX - bricks[i].r_x) < abs(tempY - bricks[i].u_y)) {
+                                    // hit right side
+                                    tempBrickSide = 4;
+                                    ballX = bricks[i].r_x + ballRadius;
+                                } else {
+                                    // hit top
+                                    tempBrickSide = 2;
+                                    ballY = bricks[i].u_y - ballRadius;
+                                }
+                            } else {
+                                if (abs(tempX - bricks[i].r_x) == abs(tempY - bricks[i].b_y)) {
+                                    // hit bottom right corner
+                                    tempBrickSide = 5;
+                                    ballX = bricks[i].r_x + ballRadius;
+                                    ballY = bricks[i].b_y + ballRadius;
+                                } else if (abs(tempX - bricks[i].r_x) < abs(tempY - bricks[i].b_y)) {
+                                    // hit right side
+                                    tempBrickSide = 4;
+                                    ballX = bricks[i].r_x + ballRadius;
+                                } else {
+                                    // hit bottom
+                                    tempBrickSide = 6;
+                                    ballY = bricks[i].b_y + ballRadius;
+                                }
+                            }
+                        }
+                        /* if (ballY >= bricks[i].u_y && ballY <= bricks[i].b_y) {
                             if (ballX < bricks[i].l_x + bricks[i].width/2) {
                                 tempBrickSide = 0;
                                 tempX = bricks[i].l_x;
@@ -199,7 +273,7 @@ int main(int argc, char const *argv[])
                                 tempBrickSide = 3;
                                 tempY = bricks[i].b_y;
                             }
-                        }
+                        } */
                     }
                 }
             }
@@ -255,7 +329,11 @@ int main(int argc, char const *argv[])
                     }
                     ballYDir = -ballYDir;
                 } else if (collision_with_brick) { // with brick
-                    if (tempBrickSide == 0 || tempBrickSide == 2) {
+                    if (tempBrickSide == 0 || tempBrickSide == 1 || tempBrickSide == 3 ||
+                        tempBrickSide == 4 || tempBrickSide == 5 || tempBrickSide == 7) { ballXDir = -ballXDir; }
+                    if (tempBrickSide == 1 || tempBrickSide == 2 || tempBrickSide == 3 ||
+                        tempBrickSide == 5 || tempBrickSide == 6 || tempBrickSide == 7) { ballYDir = -ballYDir; }
+                    /* if (tempBrickSide == 0 || tempBrickSide == 2) {
                         ballXDir = -ballXDir;
                         if (tempBrickSide == 0) { ballX = tempX - ballRadius; 
                         } else { ballX = tempX + ballRadius; }
@@ -263,7 +341,7 @@ int main(int argc, char const *argv[])
                         ballYDir = -ballYDir;
                         if (tempBrickSide == 1) { ballY = tempY - ballRadius;
                         } else { ballY = tempY + ballRadius; }
-                    }
+                    } */
                     collision_with_brick = false;
                 }
 
