@@ -71,9 +71,19 @@ int main(int argc, char const *argv[])
             (player_l_x <= ball_r_x);
 
     // levels
+    bool levelLoaded{false};
     int currentLevel = 1;
-    level levels[1];
-        levels[0] = level{{{5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5},
+    level levels[2];
+        levels[0] = level{{{4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4},
+                           {4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4},
+                           {3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3},
+                           {3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3},
+                           {2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2},
+                           {2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2},
+                           {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
+                           {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}}};
+
+        levels[1] = level{{{5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5},
                            {1, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 1},
                            {1, 1, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 1, 1},
                            {1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1},
@@ -89,27 +99,13 @@ int main(int argc, char const *argv[])
                            {1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1},
                            {1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1}}};
 
-    // build bricks
+    // brick variables
+    int brickRows = 15;
+    int brickColumns = 14;
     int brickWidth = 90;
     int brickHeight = 20;
     int brickCnt = 0;
     brick bricks[210];
-    for (int j = 0; j < 15; j++)
-    {
-        for (int k = 0; k < 14; k++)
-        {
-            bricks[brickCnt].power = levels[currentLevel - 1].row[j][k];
-            bricks[brickCnt].width = brickWidth;
-            bricks[brickCnt].height = brickHeight;
-            bricks[brickCnt].x = 3 + k + (bricks[brickCnt].width * k);
-            bricks[brickCnt].y = 50 + j + (bricks[brickCnt].height * j);
-            bricks[brickCnt].l_x = bricks[brickCnt].x;
-            bricks[brickCnt].r_x = bricks[brickCnt].x + bricks[brickCnt].width;
-            bricks[brickCnt].u_y = bricks[brickCnt].y;
-            bricks[brickCnt].b_y = bricks[brickCnt].y + bricks[brickCnt].height;
-            brickCnt++;
-        }
-    }
 
     /****************************
      *       Power  Chart       *
@@ -132,6 +128,32 @@ int main(int argc, char const *argv[])
     SetTargetFPS(60);
     while(!WindowShouldClose())
     {
+        // load level if needed
+        if (!levelLoaded) {
+            // build bricks for level
+            brickCnt = 0;
+            for (int j = 0; j < brickRows; j++) {
+                for (int k = 0; k < brickColumns; k++) {
+                    bricks[brickCnt].power = levels[currentLevel - 1].row[j][k];
+                    bricks[brickCnt].width = brickWidth;
+                    bricks[brickCnt].height = brickHeight;
+                    bricks[brickCnt].x = 3 + k + (bricks[brickCnt].width * k);
+                    bricks[brickCnt].y = 50 + j + (bricks[brickCnt].height * j);
+                    bricks[brickCnt].l_x = bricks[brickCnt].x;
+                    bricks[brickCnt].r_x = bricks[brickCnt].x + bricks[brickCnt].width;
+                    bricks[brickCnt].u_y = bricks[brickCnt].y;
+                    bricks[brickCnt].b_y = bricks[brickCnt].y + bricks[brickCnt].height;
+                    brickCnt++;
+                }
+            }
+            // reset ball
+            ballX = playerCenter;
+            ballY = playerY - ballRadius - 3;
+            ballInPlay = false;
+            // level is loaded
+            levelLoaded = true;
+        }
+
         // update edges
             // player
             player_l_x = playerX;
@@ -184,6 +206,8 @@ int main(int argc, char const *argv[])
 
         // Toggle full screen
         if (IsKeyDown(KEY_LEFT_CONTROL) && IsKeyPressed(KEY_F)) { ToggleFullscreen(); }
+        else if (IsKeyDown(KEY_ONE)) { currentLevel = 1; levelLoaded = false; } // FOR TESTING: Loads Level 1
+        else if (IsKeyDown(KEY_TWO)) { currentLevel = 2; levelLoaded = false; } // FOR TESTING: Loads Level 2
 
         BeginDrawing();
 
