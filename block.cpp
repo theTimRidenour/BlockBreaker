@@ -72,9 +72,11 @@ int main(int argc, char const *argv[])
 
     // levels
     bool levelLoaded{false};
+    bool levelIsComplete{false};
     int currentLevel = 1;
-    level levels[2];
-        levels[0] = level{{{4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4},
+    level levels[3];
+        levels[0] = level{{{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1}}};
+        levels[1] = level{{{4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4},
                            {4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4},
                            {3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3},
                            {3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3},
@@ -83,7 +85,7 @@ int main(int argc, char const *argv[])
                            {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
                            {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}}};
 
-        levels[1] = level{{{5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5},
+        levels[2] = level{{{5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5},
                            {1, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 1},
                            {1, 1, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 1, 1},
                            {1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1},
@@ -159,6 +161,25 @@ int main(int argc, char const *argv[])
             ballInPlay = false;
             // level is loaded
             levelLoaded = true;
+        }
+
+        // check if level complete
+        levelIsComplete = true;
+        for (int i = 0; i < 210; i++) {
+            if (!(bricks[i].power == 0 || bricks[i].power == 5)) {
+                levelIsComplete = false;
+            }
+        }
+        if (levelIsComplete) {
+            if (currentLevel < (int)(sizeof(levels)/sizeof(level))) {
+                currentLevel++;
+            } else {
+                // Game Won
+                currentLevel = 1;
+            }
+            levelIsComplete = false;
+            levelLoaded = false;
+
         }
 
         // update edges
@@ -280,8 +301,7 @@ int main(int argc, char const *argv[])
 
         // Toggle full screen
         if (IsKeyDown(KEY_LEFT_CONTROL) && IsKeyPressed(KEY_F)) { ToggleFullscreen(); }
-        else if (IsKeyDown(KEY_ONE)) { currentLevel = 1; levelLoaded = false; } // FOR TESTING: Loads Level 1
-        else if (IsKeyDown(KEY_TWO)) { currentLevel = 2; levelLoaded = false; } // FOR TESTING: Loads Level 2
+
 
         BeginDrawing();
 
