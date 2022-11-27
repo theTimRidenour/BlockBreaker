@@ -211,9 +211,68 @@ int main(int argc, char const *argv[])
                     
                     if (collision_with_brick) {
                         if (bricks[i].power != 5) { bricks[i].power--; }
-                        tempX = ballX + ballVel * -ballXDir;
-                        tempY = ballY + ballVel * -ballYDir;
-                        if (abs(tempX - bricks[i].l_x) < abs(tempX - bricks[i].r_x)) {
+                        tempX = ballX + ballVel * -ballXDir; // for collision check versions 2 & 3
+                        tempY = ballY + ballVel * -ballYDir; // for collision check versions 2 & 3
+
+                        /*** collision check version 3 ***/
+                        // collision with left side [0]
+                        if (tempX <= bricks[i].l_x && ((tempY >= bricks[i].u_y && tempY <= bricks[i].b_y) || // directly to left side
+                            (tempY <= bricks[i].u_y && abs(tempY - bricks[i].u_y) < abs(tempX - bricks[i].l_x)) || // left from above
+                            (tempY >= bricks[i].b_y && abs(tempY - bricks[i].b_y) < abs(tempX - bricks[i].l_x)))) { // left from below
+                                tempBrickSide = 0;
+                                ballX = bricks[i].l_x - ballRadius;
+
+                        // collision with top left corner [1]
+                        } else if (tempX <= bricks[i].l_x && tempY <= bricks[i].u_y && // top-left corner
+                            abs(tempX - bricks[i].l_x) == abs(tempY - bricks[i].u_y)) {
+                                tempBrickSide = 1;
+                                ballX = bricks[i].l_x - ballRadius;
+                                ballY = bricks[i].u_y - ballRadius;
+
+                        // collision with top [2]
+                        } else if (tempY <= bricks[i].u_y && ((tempX >= bricks[i].l_x && tempX <= bricks[i].r_x) || // directly above
+                            (tempX <= bricks[i].l_x && abs(tempX - bricks[i].l_x) < abs(tempY - bricks[i].u_y)) || // above from left
+                            (tempX >= bricks[i].r_x && abs(tempX - bricks[i].r_x) < abs(tempY - bricks[i].u_y)))) { // above from right
+                                tempBrickSide = 2;
+                                ballY = bricks[i].u_y - ballRadius;
+
+                        // collision with top right corner [3]
+                        } else if (tempX >= bricks[i].r_x && tempY <= bricks[i].u_y && // top-right corner
+                            abs(tempX - bricks[i].r_x) == abs(tempY - bricks[i].u_y)) {
+                                tempBrickSide = 3;
+                                ballX = bricks[i].r_x + ballRadius;
+                                ballY = bricks[i].u_y - ballRadius;
+                        
+                        // collision with right side [4]
+                        } else if (tempX >= bricks[i].r_x && ((tempY >= bricks[i].u_y && tempY <= bricks[i].b_y) || // directly to right side
+                            (tempY <= bricks[i].u_y && abs(tempY - bricks[i].u_y) < abs(tempX - bricks[i].r_x)) || // right from above
+                            (tempY >= bricks[i].b_y && abs(tempY - bricks[i].b_y) < abs(tempX - bricks[i].r_x)))) {
+                                tempBrickSide = 4;
+                                tempX = bricks[i].r_x + ballRadius;
+
+                        // collision with bottom-right corner [5]
+                        } else if (tempX >= bricks[i].r_x && tempY >= bricks[i].b_y && // bottom-right corner
+                            abs(tempX - bricks[i].r_x) == abs(tempY - bricks[i].b_y)) {
+                                tempBrickSide = 5;
+                                ballX = bricks[i].r_x + ballRadius;
+                                ballY = bricks[i].b_y + ballRadius;
+
+                        // collision with bottom [6]
+                        } else if (tempY >= bricks[i].b_y && ((tempX >= bricks[i].l_x && tempX <= bricks[i].r_x) || // directly below
+                            (tempX <= bricks[i].l_x && abs(tempX - bricks[i].l_x) < abs(tempY - bricks[i].b_y)) || // below from left
+                            (tempX >= bricks[i].r_x && abs(tempX - bricks[i].r_x) < abs(tempY - bricks[i].b_y)))) {
+                                tempBrickSide = 6;
+                                ballY = bricks[i].b_y + ballRadius;
+
+                        // collision with bottom-left corner [7]
+                        } else { // no check needed
+                                tempBrickSide = 7;
+                                ballX = bricks[i].l_x - ballRadius;
+                                ballY = bricks[i].b_y + ballRadius;
+                        }
+
+                        /*** collision check version 2 ***/
+                        /* if (abs(tempX - bricks[i].l_x) < abs(tempX - bricks[i].r_x)) {
                             if (abs(tempY - bricks[i].u_y) < abs(tempY - bricks[i].b_y)) {
                                 if (abs(tempX - bricks[i].l_x) == abs(tempY - bricks[i].u_y)) {
                                     // hit top left corner
@@ -277,7 +336,9 @@ int main(int argc, char const *argv[])
                                     ballY = bricks[i].b_y + ballRadius;
                                 }
                             }
-                        }
+                        } */
+
+                        /*** collsion check version 1 ***/
                         /* if (ballY >= bricks[i].u_y && ballY <= bricks[i].b_y) {
                             if (ballX < bricks[i].l_x + bricks[i].width/2) {
                                 tempBrickSide = 0;
@@ -349,10 +410,12 @@ int main(int argc, char const *argv[])
                     }
                     ballYDir = -ballYDir;
                 } else if (collision_with_brick) { // with brick
+                    /*** collision checks versions 2 & 3 ***/
                     if (tempBrickSide == 0 || tempBrickSide == 1 || tempBrickSide == 3 ||
                         tempBrickSide == 4 || tempBrickSide == 5 || tempBrickSide == 7) { ballXDir = -ballXDir; }
                     if (tempBrickSide == 1 || tempBrickSide == 2 || tempBrickSide == 3 ||
                         tempBrickSide == 5 || tempBrickSide == 6 || tempBrickSide == 7) { ballYDir = -ballYDir; }
+                    /*** collision check version one ***/
                     /* if (tempBrickSide == 0 || tempBrickSide == 2) {
                         ballXDir = -ballXDir;
                         if (tempBrickSide == 0) { ballX = tempX - ballRadius; 
