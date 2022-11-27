@@ -45,7 +45,9 @@ int main(int argc, char const *argv[])
         int player_r_x = playerX + playerWidth;
         int player_u_y = playerY;
         int player_b_y = playerY + playerHeight;
-        // score
+        // score & lives
+        const int PLAYERS_MAX_LIVES = 5;
+        int playerLives = 5;
         int playerScore = 0;
         char playerScoreText[5];
         std::sprintf(playerScoreText, "%d", playerScore);
@@ -384,6 +386,17 @@ int main(int argc, char const *argv[])
         DrawRectangle(playerX, playerY, playerWidth, playerHeight, BLUE);
         DrawCircle(ballX, ballY, ballRadius, LIGHTGRAY);
 
+        // draw lives and score
+        DrawRectangle(0, 0, WIN_WIDTH, 40, LIGHTGRAY);
+        for (int i = 0; i < PLAYERS_MAX_LIVES; i++) {
+            DrawCircle(25 + ((PLAYERS_MAX_LIVES-1) * 40) - (40 * i), 20, 16, DARKGRAY);
+        }
+        if (playerLives > PLAYERS_MAX_LIVES) { playerLives = PLAYERS_MAX_LIVES; }
+        for (int i = 0; i < playerLives; i++) {
+            DrawCircle(25 + ((PLAYERS_MAX_LIVES-1) * 40) - (40 * i), 20, 14, WHITE);
+        }
+        // TODO: score
+
         if (runningTime >= updateTime)
         {
             // player moves left or right
@@ -440,12 +453,13 @@ int main(int argc, char const *argv[])
                 } else if (ballY < 50 + ballRadius) { // bounce off ceilling
                     ballY = 50 + ballRadius;
                     ballYDir = -ballYDir;
-                } else if (ballY > WIN_HEIGHT + ballRadius*2) { // reset ball if it goes out of play
+                } else if (ballY > WIN_HEIGHT + ballRadius*2) { // out of bounds
                     ballX = playerCenter;
                     ballY = playerY - ballRadius - 3;
                     ballInPlay = false;
                     ballXDir = 1;
                     ballYDir = -1;
+                    playerLives--;
                 }
             }
 
