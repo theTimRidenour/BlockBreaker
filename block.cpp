@@ -49,8 +49,8 @@ int main(int argc, char const *argv[])
         const int PLAYERS_MAX_LIVES = 5;
         int playerLives = 5;
         int playerScore = 0;
-        char playerScoreText[5];
-        std::sprintf(playerScoreText, "%d", playerScore);
+        char playerScoreText[10];
+        int scoreWidth = 0;
 
     // ball
         // position, size & movement
@@ -107,7 +107,7 @@ int main(int argc, char const *argv[])
     int brickRows = 15;
     int brickColumns = 14;
     int brickWidth = 90;
-    int brickHeight = 20;
+    int brickHeight = 30;
     int brickCnt = 0;
     brick bricks[210];
 
@@ -212,7 +212,7 @@ int main(int argc, char const *argv[])
                         (bricks[i].l_x <= ball_r_x);
                     
                     if (collision_with_brick) {
-                        if (bricks[i].power != 5) { bricks[i].power--; }
+                        if (bricks[i].power != 5) { playerScore += bricks[i].power; bricks[i].power--; }
                         tempX = ballX + (ballVel * -ballXDir) * 3; // for collision check versions 2 & 3
                         tempY = ballY + (ballVel * -ballYDir) * 3; // for collision check versions 2 & 3
 
@@ -386,7 +386,7 @@ int main(int argc, char const *argv[])
         DrawRectangle(playerX, playerY, playerWidth, playerHeight, BLUE);
         DrawCircle(ballX, ballY, ballRadius, LIGHTGRAY);
 
-        // draw lives and score
+        // draw lives
         DrawRectangle(0, 0, WIN_WIDTH, 40, LIGHTGRAY);
         for (int i = 0; i < PLAYERS_MAX_LIVES; i++) {
             DrawCircle(25 + ((PLAYERS_MAX_LIVES-1) * 40) - (40 * i), 20, 16, DARKGRAY);
@@ -396,7 +396,10 @@ int main(int argc, char const *argv[])
         for (int i = 0; i < playerLives; i++) {
             DrawCircle(25 + ((PLAYERS_MAX_LIVES-1) * 40) - (40 * i), 20, 14, WHITE);
         }
-        // TODO: score
+        // draw score
+        std::sprintf(playerScoreText, "%d", playerScore);
+        scoreWidth = MeasureText(playerScoreText, 35);
+        DrawText(playerScoreText, WIN_WIDTH - (10 + scoreWidth), 5, 35, RED);
 
         if (runningTime >= updateTime)
         {
