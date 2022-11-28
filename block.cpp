@@ -401,6 +401,25 @@ int main(int argc, char const *argv[])
         scoreWidth = MeasureText(playerScoreText, 35);
         DrawText(playerScoreText, WIN_WIDTH - (10 + scoreWidth), 5, 35, RED);
 
+        // GAME OVER
+        if (playerLives <= 0) {
+            int textWidth = MeasureText("GAME", 150)/2;
+            DrawRectangle(WIN_WIDTH/2 - textWidth - 13, WIN_HEIGHT/2 - 60, 26 + textWidth*2, 256, WHITE);
+            DrawRectangle(WIN_WIDTH/2 - textWidth - 10, WIN_HEIGHT/2 - 57, 20 + textWidth*2, 250, BLACK);
+            DrawText("GAME", WIN_WIDTH/2 - textWidth - 3, WIN_HEIGHT/2 - 57, 150, RED);
+            DrawText("GAME", WIN_WIDTH/2 - textWidth - 3, WIN_HEIGHT/2 - 63, 150, BLUE);
+            DrawText("GAME", WIN_WIDTH/2 - textWidth + 3, WIN_HEIGHT/2 - 57, 150, RED);
+            DrawText("GAME", WIN_WIDTH/2 - textWidth + 3, WIN_HEIGHT/2 - 63, 150, BLUE);
+            DrawText("GAME", WIN_WIDTH/2 - textWidth, WIN_HEIGHT/2 - 60, 150, WHITE);
+            DrawText("OVER", WIN_WIDTH/2 - textWidth + 3, WIN_HEIGHT/2 + 57, 150, RED);
+            DrawText("OVER", WIN_WIDTH/2 - textWidth + 3, WIN_HEIGHT/2 + 63, 150, BLUE);
+            DrawText("OVER", WIN_WIDTH/2 - textWidth - 3, WIN_HEIGHT/2 + 57, 150, RED);
+            DrawText("OVER", WIN_WIDTH/2 - textWidth - 3, WIN_HEIGHT/2 + 63, 150, BLUE);
+            DrawText("OVER", WIN_WIDTH/2 - textWidth, WIN_HEIGHT/2 + 60, 150, WHITE);
+            ballInPlay = false;
+            ballY = playerY - ballRadius - 3;
+        }
+
         if (runningTime >= updateTime)
         {
             // player moves left or right
