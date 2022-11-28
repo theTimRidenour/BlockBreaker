@@ -213,8 +213,8 @@ int main(int argc, char const *argv[])
                     
                     if (collision_with_brick) {
                         if (bricks[i].power != 5) { bricks[i].power--; }
-                        tempX = ballX + ballVel * -ballXDir; // for collision check versions 2 & 3
-                        tempY = ballY + ballVel * -ballYDir; // for collision check versions 2 & 3
+                        tempX = ballX + (ballVel * -ballXDir) * 3; // for collision check versions 2 & 3
+                        tempY = ballY + (ballVel * -ballYDir) * 3; // for collision check versions 2 & 3
 
                         /*** collision check version 3 ***/
                         // collision with left side [0]
@@ -390,6 +390,7 @@ int main(int argc, char const *argv[])
         DrawRectangle(0, 0, WIN_WIDTH, 40, LIGHTGRAY);
         for (int i = 0; i < PLAYERS_MAX_LIVES; i++) {
             DrawCircle(25 + ((PLAYERS_MAX_LIVES-1) * 40) - (40 * i), 20, 16, DARKGRAY);
+            DrawCircle(25 + ((PLAYERS_MAX_LIVES-1) * 40) - (40 * i), 20, 14, BLACK);
         }
         if (playerLives > PLAYERS_MAX_LIVES) { playerLives = PLAYERS_MAX_LIVES; }
         for (int i = 0; i < playerLives; i++) {
